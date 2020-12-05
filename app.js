@@ -1,4 +1,5 @@
 const randomRecipe = document.querySelector('#randomRecipe');
+const favRecipes = document.querySelector('#fav-recipes');
 
 const getRandomRecipe = async () => {
     const config = { headers: {Accept:'application/json'} }
@@ -26,8 +27,9 @@ const getRandomRecipe = async () => {
             btn.classList.add('opacity-100');
             btn.classList.remove('opacity-25');
         }
-    })
-    
+        favRecipes.innerHTML = ''
+        fetchFavRecipe();
+    });
 }
 
 getRandomRecipe()
@@ -35,8 +37,8 @@ getRandomRecipe()
 const getRecipeById = async (id) => {
     const config = { headers: {Accept:'application/json'} }
     const res = await axios.get("https://www.themealdb.com/api/json/v1/1/lookup.php?i=" + id, config);
-    const meal = res.data.meals;
-    return meal
+    const recipe = res.data.meals[0];
+    return recipe
 }
 // function getRecipeBySearch(term) {
 //     axios.get("https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiatssa" + term)
@@ -70,7 +72,9 @@ function getFromLS() {
 
     return recipeIds === null ? [] : recipeIds;
 }
+
 fetchFavRecipe()
+
 async function fetchFavRecipe() {
     const recipeIds = getFromLS();
 
@@ -79,6 +83,23 @@ async function fetchFavRecipe() {
     for(let i=0; i<recipeIds.length; i++) {
         const recipeId = recipeIds[i];
         recipe = await getRecipeById(recipeId);
-        recipes.push(recipe);
+
+        addRecipeToFav(recipe)
     }
 }
+
+
+function addRecipeToFav(mealData) {
+    const favRecipe = document.createElement('li');
+
+    favRecipe.classList.add("w-1/3")
+    favRecipe.innerHTML = `
+        <img 
+            src="${mealData.strMealThumb}" 
+            alt="${mealData.strMeal}"
+        class="w-64 rounded-full"/>
+        <span class="text-xs">${mealData.strMeal}</span>
+    `;
+
+    favRecipes.appendChild(favRecipe);
+} 
