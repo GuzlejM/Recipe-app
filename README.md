@@ -1,1 +1,5 @@
-Recipe app which consumes outside API and shows recipes.
+Recipe app which consumes outside TheMealDB API and shows recipes to USER
+
+Stack 
+  - Vanilla JS
+  - Tailwind CSS
