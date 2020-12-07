@@ -3,6 +3,7 @@ const favRecipes = document.querySelector('#fav-recipes');
 
 const searchTerm = document.querySelector('#searchTerm');
 const searchBtn = document.querySelector('#searchBtn');
+const searchListing = document.querySelector('#searchListing');
 
 const getRandomRecipe = async () => {
     const config = { headers: {Accept:'application/json'} }
@@ -44,9 +45,17 @@ const getRecipeById = async (id) => {
     return recipe
 }
 
-const getRecipeBySearch = async (term) => {
+const getRecipeBySearchIngredient = async (term) => {
     const config = { headers: {Accept:'application/json'} }
     const res = await axios.get("https://www.themealdb.com/api/json/v1/1/filter.php?i=" + term, config);
+    
+    const recipe = res.data.meals;
+    return recipe
+}
+
+const getRecipeBySearchName = async (term) => {
+    const config = { headers: {Accept:'application/json'} }
+    const res = await axios.get("https://www.themealdb.com/api/json/v1/1/search.php?s=" + term, config);    
     const recipe = res.data.meals;
     if(recipe === null || recipe == "") {
         alert(`We couldn't find a match for "${term}". Please try another search.`)
@@ -96,14 +105,14 @@ async function fetchFavRecipe() {
 }
 
 
-function addRecipeToFav(mealData) {
+function addRecipeToFav(recipeData) {
     const favRecipe = document.createElement('li');
     
     favRecipe.classList.add('mx-2');
     favRecipe.innerHTML = `
         <img 
-            src="${mealData.strMealThumb}" 
-            alt="${mealData.strMeal}"
+            src="${recipeData.strMealThumb}" 
+            alt="${recipeData.strMeal}"
         class=""/>
         <span class=""></span>
     `;
@@ -117,6 +126,43 @@ function addRecipeToFav(mealData) {
 searchBtn.addEventListener('click', async (e) => {
     const search = searchTerm.value;
 
-    const recipes = await getRecipeBySearch(search);
+    let recipes = await getRecipeBySearchIngredient(search); 
 
+    recipes.forEach((recipe) => {
+        let recipeItem = document.createElement('li');
+        recipeItem.innerHTML = `
+        <img 
+            src="${recipe.strMealThumb}" 
+            alt="${recipe.strMeal}"
+        class=""/>
+        <div class="flex justify-between p-5">
+            <span class="">${recipe.strMeal}</span>
+            <button><i id="fav-btn" class="fas fa-heart opacity-25"></i></button>
+        </div>
+            `;
+        console.log(recipeItem)
+        searchListing.appendChild(recipeItem)
+    })
+});
+
+searchBtn.addEventListener('click', async (e) => {
+    const search = searchTerm.value;
+
+    let recipes = await getRecipeBySearchName(search); 
+
+    recipes.forEach((recipe) => {
+        let recipeItem = document.createElement('li');
+        recipeItem.innerHTML = `
+        <img 
+            src="${recipe.strMealThumb}" 
+            alt="${recipe.strMeal}"
+        class=""/>
+        <div class="flex justify-between p-5">
+            <span class="">${recipe.strMeal}</span>
+            <button><i id="fav-btn" class="fas fa-heart opacity-25"></i></button>
+        </div>
+            `;
+        console.log(recipeItem)
+        searchListing.appendChild(recipeItem)
+    })
 });
