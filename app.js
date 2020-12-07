@@ -1,6 +1,9 @@
 const randomRecipe = document.querySelector('#randomRecipe');
 const favRecipes = document.querySelector('#fav-recipes');
 
+const searchTerm = document.querySelector('#searchTerm');
+const searchBtn = document.querySelector('#searchBtn');
+
 const getRandomRecipe = async () => {
     const config = { headers: {Accept:'application/json'} }
     const res = await axios.get("https://www.themealdb.com/api/json/v1/1/random.php", config);
@@ -40,16 +43,19 @@ const getRecipeById = async (id) => {
     const recipe = res.data.meals[0];
     return recipe
 }
-// function getRecipeBySearch(term) {
-//     axios.get("https://www.themealdb.com/api/json/v1/1/search.php?s=Arrabiatssa" + term)
-//     .then( res => {
-//         console.log(res.data)
-//     })
-//     .catch(err => {
-//         console.log("Error!", err)
-//     })
-// }
 
+const getRecipeBySearch = async (term) => {
+    const config = { headers: {Accept:'application/json'} }
+    const res = await axios.get("https://www.themealdb.com/api/json/v1/1/filter.php?i=" + term, config);
+    const recipe = res.data.meals;
+    if(recipe === null || recipe == "") {
+        alert(`We couldn't find a match for "${term}". Please try another search.`)
+    } else {
+    return recipe
+    }
+}
+
+// Local storage config //
 
 function addToLS(recipeId) {
     const recipeIds = getFromLS();
@@ -73,6 +79,7 @@ function getFromLS() {
     return recipeIds === null ? [] : recipeIds;
 }
 
+// Calling fetchFavRecipe func and get recipes saved in local storage //
 fetchFavRecipe()
 
 async function fetchFavRecipe() {
@@ -91,15 +98,25 @@ async function fetchFavRecipe() {
 
 function addRecipeToFav(mealData) {
     const favRecipe = document.createElement('li');
-
-    favRecipe.classList.add("w-1/3")
+    
+    favRecipe.classList.add('mx-2');
     favRecipe.innerHTML = `
         <img 
             src="${mealData.strMealThumb}" 
             alt="${mealData.strMeal}"
-        class="w-64 rounded-full"/>
-        <span class="text-xs">${mealData.strMeal}</span>
+        class=""/>
+        <span class=""></span>
     `;
 
     favRecipes.appendChild(favRecipe);
 } 
+
+
+// Clicking on Search button looks up in MealDB API for Search term
+// Using getRecipeBySearch function from line 47
+searchBtn.addEventListener('click', async (e) => {
+    const search = searchTerm.value;
+
+    const recipes = await getRecipeBySearch(search);
+
+});
