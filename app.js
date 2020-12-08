@@ -103,7 +103,6 @@ fetchFavRecipe()
 
 async function fetchFavRecipe() {
     // clean the container
-
     favRecipes.innerHTML = '';
     const recipeIds = getFromLS();
 
