@@ -121,16 +121,19 @@ async function fetchFavRecipe() {
 function addRecipeToFav(recipeData) {
     const favRecipe = document.createElement('li');
     
+    favRecipe.classList.add('justify-around');
     favRecipe.classList.add('mx-2');
+    favRecipe.classList.add('w-20');
+    favRecipe.classList.add('relative');
     favRecipe.innerHTML = `
+        <button class="absolute -top-1 -right-1 -my-1" id="btn"><i class="fas fa-window-close"></i></button>
         <img 
             src="${recipeData.strMealThumb}" 
             alt="${recipeData.strMeal}"
             class=""
             id="favRecipeImg"
             />
-        <span class=""></span>
-        <button id="btn"><i class="fas fa-window-close"></i></button>
+        <span class="text-xs">${recipeData.strMeal}</span>
     `;
     const btn = favRecipe.querySelector('#btn');
 
@@ -139,6 +142,8 @@ function addRecipeToFav(recipeData) {
         removeFromLS(recipeData.idMeal);
 
         fetchFavRecipe();
+
+
     });
 
     favRecipes.appendChild(favRecipe);
