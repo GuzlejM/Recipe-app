@@ -1,6 +1,6 @@
 Recipe app which consumes outside TheMealDB API and shows recipes to USER
 
-Build with  
+Build with:
   - Vanilla JS
   - Tailwind CSS
   - Axios 
